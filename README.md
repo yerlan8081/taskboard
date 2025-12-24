@@ -1,77 +1,93 @@
+````md
 # Taskboard
 
-## A) Project Overview
-- 看板式任务管理：Board/List/Task CRUD、JWT 鉴权、graphql-ws 实时任务更新。
-- 前端：Next.js App Router + Apollo Client + Zustand，本地持久化 token，订阅自动更新。
-- 后端：Express + Apollo Server + Mongoose，统一 UNAUTHENTICATED/FORBIDDEN 错误码。
+## A) Жобаға шолу (Project Overview)
+- Канбан-тақтаға негізделген тапсырма менеджері: Board/List/Task CRUD, JWT аутентификациясы, graphql-ws арқылы тапсырмаларды нақты уақыт режимінде жаңарту.
+- Frontend: Next.js App Router + Apollo Client + Zustand, token-ді жергілікті сақтау (persist), subscription арқылы автоматты жаңарту.
+- Backend: Express + Apollo Server + Mongoose, UNAUTHENTICATED/FORBIDDEN қателерінің бірыңғай кодтары.
 
-## B) Tech Stack
-- Client: Next.js (App Router), TailwindCSS, Apollo Client (HTTP + graphql-ws), Zustand。
-- Server: Express, Apollo Server 4, Mongoose, graphql-ws。
-- Infra: Docker Compose (mongo + server + client)。
-- Test: Jest + ts-jest + mongodb-memory-server + supertest。
+## B) Технологиялық стек (Tech Stack)
+- Client: Next.js (App Router), TailwindCSS, Apollo Client (HTTP + graphql-ws), Zustand.
+- Server: Express, Apollo Server 4, Mongoose, graphql-ws.
+- Infra: Docker Compose (mongo + server + client).
+- Test: Jest + ts-jest + mongodb-memory-server + supertest.
 
-## C) Architecture
-- 流程：Client (HTTP/WS, Authorization: Bearer) → Apollo Server → MongoDB。
-- 同一端口 4000 提供 HTTP GraphQL 与 graphql-ws Subscription。
-- Health: GET /health。
+## C) Архитектура (Architecture)
+- Ағым: Client (HTTP/WS, Authorization: Bearer) → Apollo Server → MongoDB.
+- Бір портта (4000) HTTP GraphQL және graphql-ws Subscription қатар жұмыс істейді.
+- Health: GET /health.
 
-## D) Domain Models
-- User: email(unique, required), passwordHash, name, role(USER/ADMIN), status(ACTIVE/DISABLED), avatarUrl?。
-- Board: title(required), description?, ownerId(User), visibility(PRIVATE/ PUBLIC), cover?, isArchived.
-- List: boardId(Board), title(required), order(required), color?, wipLimit?, isArchived.
-- Task: listId(List), title(required), description?, priority(LOW/MEDIUM/HIGH), status(TODO/DOING/DONE), dueDate?, tags[], assigneeId?.
+## D) Домендік модельдер (Domain Models)
+- User: email (unique, required), passwordHash, name, role (USER/ADMIN), status (ACTIVE/DISABLED), avatarUrl?.
+- Board: title (required), description?, ownerId (User), visibility (PRIVATE/PUBLIC), cover?, isArchived.
+- List: boardId (Board), title (required), order (required), color?, wipLimit?, isArchived.
+- Task: listId (List), title (required), description?, priority (LOW/MEDIUM/HIGH), status (TODO/DOING/DONE), dueDate?, tags[], assigneeId?.
 
-## E) Local Run (Docker)
+## E) Жергілікті іске қосу (Docker)
 ```powershell
 docker compose up --build
-```
-- Client: http://localhost:3000
-- GraphQL HTTP: http://localhost:4000/graphql
-- GraphQL WS: ws://localhost:4000/graphql
-- Health: http://localhost:4000/health
+````
 
-## F) Environment Variables
-- 复制示例：
-  - Server: `cp server/.env.example server/.env`（若使用 PowerShell: `copy server/.env.example server/.env`）
-  - Client: `cp client/.env.example client/.env`
-- 默认值已指向本机 localhost，如使用 Docker Compose 可直接运行。
+* Client: [http://localhost:3000](http://localhost:3000)
+* GraphQL HTTP: [http://localhost:4000/graphql](http://localhost:4000/graphql)
+* GraphQL WS: ws://localhost:4000/graphql
+* Health: [http://localhost:4000/health](http://localhost:4000/health)
 
-## G) Core Demo Flow
-1) 打开 http://localhost:3000/login，注册或使用 seed 账号登录。
-2) 进入 /boards：查看现有 boards，可创建新 board（默认 PRIVATE）。
-3) 进入某个 board（/boards/[id]）：查看 lists + tasks，更新任务状态。
-4) /dashboard：自动确保默认 board 与 今天/本周/稍后 列表并展示任务数量。
-5) /tasks/[id] 查看任务详情，/profile 查看当前用户信息。
+## F) Қоршаған орта айнымалылары (Environment Variables)
 
-## H) Realtime Subscription Demo（双窗口）
-1) 窗口A 登录并打开某 board 的详情页 (/boards/[id])。
-2) 窗口B（可用隐身）登录同一账号，打开同一 board。
-3) 在窗口A 点击任务状态按钮（TODO→DOING 或 DOING→DONE）。
-4) 观察窗口B：任务状态应瞬时更新；订阅徽标显示 Listening。
-5) 如网络中断，点击“Reload lists & tasks”兜底刷新。
+* Үлгіні көшіру:
 
-## I) Testing
+  * Server: `cp server/.env.example server/.env` (PowerShell үшін: `copy server/.env.example server/.env`)
+  * Client: `cp client/.env.example client/.env`
+* Әдепкі мәндер localhost-қа бағытталған; Docker Compose қолдансаңыз, әдетте тікелей іске қосуға болады.
+
+## G) Негізгі демонстрация ағымы (Core Demo Flow)
+
+1. [http://localhost:3000/login](http://localhost:3000/login) ашыңыз, тіркеліңіз немесе seed аккаунтымен кіріңіз.
+2. /boards бетіне өтіңіз: boards тізімін қараңыз, жаңа board жасаңыз (әдепкісі PRIVATE).
+3. Белгілі бір board-қа кіріңіз (/boards/[id]): lists + tasks қарап, тапсырма статусын жаңартыңыз.
+4. /dashboard: әдепкі board және «Бүгін/Осы апта/Кейінірек» тізімдерінің барын қамтамасыз етіп, тапсырмалар санын көрсетеді.
+5. /tasks/[id] тапсырма деталі, /profile ағымдағы қолданушы ақпаратын көрсетеді.
+
+## H) Нақты уақыттағы Subscription демонстрациясы (Екі терезе)
+
+1. Терезе A: кіріп, board деталь бетін ашыңыз (/boards/[id]).
+2. Терезе B (инкогнито болуы мүмкін): сол аккаунтпен кіріп, дәл сол board-ты ашыңыз.
+3. Терезе A-да тапсырма статус батырмасын басыңыз (TODO→DOING немесе DOING→DONE).
+4. Терезе B-ны бақылаңыз: статус бірден жаңаруы керек; subscription белгісі Listening деп тұрады.
+5. Егер желі үзілсе, «Reload lists & tasks» арқылы сақтық (fallback) жаңартуды қолданыңыз.
+
+## I) Тестілеу (Testing)
+
 ```powershell
 cd server
 npm test
 ```
 
-## J) Seed Data
+## J) Seed деректері (Seed Data)
+
 ```powershell
 cd server
 npm run seed
 ```
-- 创建用户：demo@example.com / Passw0rd!
-- 创建 Board："Realtime Demo Board"，默认 Lists：今天/本周/稍后（order 1/2/3），附带多条任务。
-- 运行后直接在 /login 使用上述账号即可快速演示。
 
-## K) Troubleshooting
-- 端口占用：确保 3000/4000 空闲；如被占用可改 .env 后重启。
-- WS 鉴权：Authorization 通过 connectionParams 传递 Bearer token，未登录会 UNAUTHENTICATED。
-- UNAUTHENTICATED：token 过期/缺失，重新登录；客户端会自动跳转 /login。
-- FORBIDDEN：操作非本人 Board，需使用 owner 账号。
-- 清库（仅本地）：`docker compose down -v` 后重新 `docker compose up --build`。
+* Қолданушы құрады: [demo@example.com](mailto:demo@example.com) / Passw0rd!
+* Board құрады: "Realtime Demo Board", әдепкі Lists: «Бүгін/Осы апта/Кейінірек» (order 1/2/3), бірнеше тапсырмамен бірге.
+* Іске қосқаннан кейін /login бетінде осы аккаунтпен кіріп, тез демонстрация жасай аласыз.
 
-## L) Contribution
-- 占位：后续可补充代码规范、分支策略与提交规范。当前阶段以可演示为主。
+## K) Ақауларды жою (Troubleshooting)
+
+* Порт бос емес: 3000/4000 бос екеніне көз жеткізіңіз; бос болмаса .env-те өзгертіп, қайта іске қосыңыз.
+* WS аутентификациясы: Authorization connectionParams арқылы Bearer token ретінде беріледі; кірмеген болса UNAUTHENTICATED болады.
+* UNAUTHENTICATED: token мерзімі өткен/жоқ — қайта кіріңіз; клиент автоматты түрде /login бетіне жібереді.
+* FORBIDDEN: өзіңізге тиесілі емес Board-та операция жасау — owner аккаунтын қолданыңыз.
+* Деректерді тазалау (тек локал): `docker compose down -v` жасап, қайта `docker compose up --build`.
+
+## L) Үлес қосу (Contribution)
+
+* Орны: кейін код стилі, branch стратегиясы және commit ережелерін қосуға болады. Қазіргі кезеңде бастысы — жұмыс істейтін демонстрация.
+
+```
+
+Дереккөз: :contentReference[oaicite:0]{index=0}
+```
