@@ -1,0 +1,24 @@
+# dependencies
+**/node_modules/
+**/.pnp
+**/.pnp.js
+
+# next / build
+client/.next/
+client/out/
+server/dist/
+**/build/
+**/.cache/
+**/coverage/
+
+# env
+**/.env
+**/.env.*
+!.env.example
+
+# logs
+**/*.log
+
+# OS
+.DS_Store
+Thumbs.db
