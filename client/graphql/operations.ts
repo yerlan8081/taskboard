@@ -10,6 +10,7 @@ export const LOGIN = gql`
         name
         role
         status
+        avatarUrl
       }
     }
   }
@@ -25,6 +26,7 @@ export const REGISTER = gql`
         name
         role
         status
+        avatarUrl
       }
     }
   }
@@ -38,6 +40,7 @@ export const ME = gql`
       name
       role
       status
+      avatarUrl
     }
   }
 `;
@@ -48,6 +51,9 @@ export const BOARDS = gql`
       id
       title
       visibility
+      description
+      cover
+      isArchived
     }
   }
 `;
@@ -70,6 +76,22 @@ export const LISTS = gql`
       title
       order
       color
+      wipLimit
+      isArchived
+    }
+  }
+`;
+
+export const LIST = gql`
+  query List($id: ID!) {
+    list(id: $id) {
+      id
+      boardId
+      title
+      order
+      color
+      wipLimit
+      isArchived
     }
   }
 `;
@@ -114,6 +136,25 @@ export const CREATE_BOARD = gql`
   }
 `;
 
+export const UPDATE_BOARD = gql`
+  mutation UpdateBoard($input: UpdateBoardInput!) {
+    updateBoard(input: $input) {
+      id
+      title
+      description
+      visibility
+      cover
+      isArchived
+    }
+  }
+`;
+
+export const DELETE_BOARD = gql`
+  mutation DeleteBoard($id: ID!) {
+    deleteBoard(id: $id)
+  }
+`;
+
 export const CREATE_LIST = gql`
   mutation CreateList($input: CreateListInput!) {
     createList(input: $input) {
@@ -121,7 +162,30 @@ export const CREATE_LIST = gql`
       title
       order
       boardId
+      color
+      wipLimit
+      isArchived
     }
+  }
+`;
+
+export const UPDATE_LIST = gql`
+  mutation UpdateList($input: UpdateListInput!) {
+    updateList(input: $input) {
+      id
+      title
+      order
+      boardId
+      color
+      wipLimit
+      isArchived
+    }
+  }
+`;
+
+export const DELETE_LIST = gql`
+  mutation DeleteList($id: ID!) {
+    deleteList(id: $id)
   }
 `;
 
@@ -131,6 +195,20 @@ export const CREATE_TASK = gql`
       id
       title
       listId
+      status
+      priority
+      tags
+    }
+  }
+`;
+
+export const UPDATE_TASK = gql`
+  mutation UpdateTask($input: UpdateTaskInput!) {
+    updateTask(input: $input) {
+      id
+      listId
+      title
+      description
       status
       priority
       tags
@@ -163,6 +241,83 @@ export const TASK_UPDATED_SUB = gql`
         priority
         tags
       }
+    }
+  }
+`;
+
+export const MOVE_TASK = gql`
+  mutation MoveTask($input: MoveTaskInput!) {
+    moveTask(input: $input) {
+      id
+      listId
+      title
+      status
+      priority
+      tags
+    }
+  }
+`;
+
+export const DELETE_TASK = gql`
+  mutation DeleteTask($id: ID!) {
+    deleteTask(id: $id)
+  }
+`;
+
+export const UPDATE_PROFILE = gql`
+  mutation UpdateProfile($input: UpdateProfileInput!) {
+    updateProfile(input: $input) {
+      id
+      email
+      name
+      role
+      status
+      avatarUrl
+    }
+  }
+`;
+
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword($input: ChangePasswordInput!) {
+    changePassword(input: $input)
+  }
+`;
+
+export const USERS = gql`
+  query Users {
+    users {
+      id
+      email
+      name
+      role
+      status
+      avatarUrl
+    }
+  }
+`;
+
+export const SET_USER_ROLE = gql`
+  mutation SetUserRole($input: SetUserRoleInput!) {
+    setUserRole(input: $input) {
+      id
+      email
+      name
+      role
+      status
+      avatarUrl
+    }
+  }
+`;
+
+export const SET_USER_STATUS = gql`
+  mutation SetUserStatus($input: SetUserStatusInput!) {
+    setUserStatus(input: $input) {
+      id
+      email
+      name
+      role
+      status
+      avatarUrl
     }
   }
 `;

@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Types } from 'mongoose';
 import { connectToDatabase, disconnectFromDatabase } from './db';
 import { hashPassword } from './auth';
-import { UserModel } from './models/user';
+import { UserModel, type UserDocument } from './models/user';
 import { BoardModel } from './models/board';
 import { ListModel } from './models/list';
 import { TaskModel } from './models/task';
@@ -15,37 +15,21 @@ async function seed() {
   const demoEmail = 'demo@example.com';
   const demoPassword = 'Passw0rd!';
   const demoName = 'Demo User';
+  const adminEmail = 'admin@example.com';
+  const adminPassword = 'Passw0rd!';
+  const adminName = 'Admin User';
   const boardTitle = 'Realtime Demo Board';
 
-  const existingUser = await UserModel.findOne({ email: demoEmail });
-  if (existingUser) {
-    const existingBoards = await BoardModel.find({ ownerId: existingUser._id, title: boardTitle });
-    const boardIds = existingBoards.map((b) => b._id);
-    if (boardIds.length) {
-      const lists = await ListModel.find({ boardId: { $in: boardIds } });
-      const listIds = lists.map((l) => l._id);
-      if (listIds.length) {
-        await TaskModel.deleteMany({ listId: { $in: listIds } });
-      }
-      await ListModel.deleteMany({ boardId: { $in: boardIds } });
-      await BoardModel.deleteMany({ _id: { $in: boardIds } });
-    }
-    await UserModel.deleteOne({ _id: existingUser._id });
-  }
+  await upsertUser(adminEmail, adminPassword, adminName, 'ADMIN');
+  await upsertUser(demoEmail, demoPassword, demoName, 'USER');
+  const demoUser = (await UserModel.findOne({ email: demoEmail })) as UserDocument;
 
-  const passwordHash = await hashPassword(demoPassword);
-  const user = await UserModel.create({
-    email: demoEmail,
-    passwordHash,
-    name: demoName,
-    role: 'USER',
-    status: 'ACTIVE'
-  });
+  await resetDemoBoard(demoUser, boardTitle);
 
   const board = await BoardModel.create({
     title: boardTitle,
     visibility: 'PRIVATE',
-    ownerId: user._id
+    ownerId: demoUser._id
   });
 
   const lists = await ListModel.insertMany([
@@ -78,9 +62,10 @@ async function seed() {
   );
 
   console.log('Seed completed.');
+  console.log(`Admin user: ${adminEmail} / ${adminPassword}`);
   console.log(`Demo user: ${demoEmail} / ${demoPassword}`);
   console.log(`Board title: ${boardTitle}`);
-  console.log('Open: http://localhost:3000/login (use demo user), then /boards or /dashboard');
+  console.log('Open: http://localhost:3000/login (use demo or admin), then /boards or /dashboard');
   console.log('GraphQL Playground: http://localhost:4000/graphql');
 }
 
@@ -92,3 +77,37 @@ seed()
   .finally(async () => {
     await disconnectFromDatabase();
   });
+
+async function upsertUser(email: string, password: string, name: string, role: 'USER' | 'ADMIN') {
+  const passwordHash = await hashPassword(password);
+  const existing = await UserModel.findOne({ email });
+  if (existing) {
+    existing.passwordHash = passwordHash;
+    existing.name = name;
+    existing.role = role;
+    existing.status = 'ACTIVE';
+    await existing.save();
+    return existing;
+  }
+  return UserModel.create({
+    email,
+    passwordHash,
+    name,
+    role,
+    status: 'ACTIVE'
+  });
+}
+
+async function resetDemoBoard(user: UserDocument, title: string) {
+  const existingBoards = await BoardModel.find({ ownerId: user._id, title });
+  const boardIds = existingBoards.map((b) => b._id);
+  if (boardIds.length) {
+    const lists = await ListModel.find({ boardId: { $in: boardIds } });
+    const listIds = lists.map((l) => l._id);
+    if (listIds.length) {
+      await TaskModel.deleteMany({ listId: { $in: listIds } });
+    }
+    await ListModel.deleteMany({ boardId: { $in: boardIds } });
+    await BoardModel.deleteMany({ _id: { $in: boardIds } });
+  }
+}

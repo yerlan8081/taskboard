@@ -4,8 +4,8 @@ export function unauthenticatedError() {
   return new GraphQLError('UNAUTHENTICATED', { extensions: { code: 'UNAUTHENTICATED' } });
 }
 
-export function forbiddenError() {
-  return new GraphQLError('FORBIDDEN', { extensions: { code: 'FORBIDDEN' } });
+export function forbiddenError(message = 'FORBIDDEN') {
+  return new GraphQLError(message, { extensions: { code: 'FORBIDDEN' } });
 }
 
 export function badUserInputError(message: string) {

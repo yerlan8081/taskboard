@@ -196,50 +196,50 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-10">
+    <main className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 px-6 py-10 text-slate-900 transition-colors dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 dark:text-slate-100">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.35em] text-amber-300">Dashboard</p>
-            <h1 className="text-3xl font-semibold text-white">我的taskboard面板</h1>
+            <p className="text-xs uppercase tracking-[0.35em] text-amber-500 dark:text-amber-300">Dashboard</p>
+            <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">我的taskboard面板</h1>
             {boardId && (
-              <p className="text-xs text-slate-400">默认看板 ID: {boardId}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">默认看板 ID: {boardId}</p>
             )}
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <Link href="/boards" className="text-amber-300 hover:text-amber-200">
+            <Link href="/boards" className="text-amber-500 hover:text-amber-200">
               Go to Boards
             </Link>
-            <Link href="/profile" className="text-amber-300 hover:text-amber-200">
+            <Link href="/profile" className="text-amber-500 hover:text-amber-200">
               Profile
             </Link>
           </div>
         </header>
 
-        {loading && <p className="text-sm text-slate-300">Loading dashboard...</p>}
-        {error && <p className="text-sm text-red-300">{error}</p>}
+        {loading && <p className="text-sm text-slate-700 dark:text-slate-300">Loading dashboard...</p>}
+        {error && <p className="text-sm text-red-600 dark:text-red-300">{error}</p>}
 
         <div className="grid gap-4 md:grid-cols-3">
           {sortedLists.map((list) => (
             <div
               key={list.id}
-              className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-lg backdrop-blur"
+              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-lg backdrop-blur dark:border-white/10 dark:bg-white/5"
             >
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handlePlus(list.id)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-amber-300 text-amber-200 hover:bg-amber-500 hover:text-slate-900"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-amber-400 text-amber-600 hover:bg-amber-500 hover:text-slate-900 dark:border-amber-300 dark:text-amber-200"
                     title="Add task"
                   >
                     +
                   </button>
                   <div>
-                    <p className="text-lg font-semibold text-white">{list.title}</p>
-                    <p className="text-xs text-slate-400">{list.tasksCount} tasks</p>
+                    <p className="text-lg font-semibold text-slate-900 dark:text-white">{list.title}</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">{list.tasksCount} tasks</p>
                   </div>
                 </div>
-                <button className="rounded-full px-2 py-1 text-xs text-slate-300 hover:bg-white/10" title="More">
+                <button className="rounded-full px-2 py-1 text-xs text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10" title="More">
                   ...
                 </button>
               </div>
@@ -252,7 +252,7 @@ export default function DashboardPage() {
                     setTaskInputs((prev) => ({ ...prev, [list.id]: e.target.value }))
                   }
                   placeholder="Quick task title"
-                  className="w-full rounded-xl border border-white/10 bg-slate-800/60 px-3 py-2 text-sm text-white focus:border-amber-400 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-amber-400 focus:outline-none dark:border-white/10 dark:bg-slate-800/60 dark:text-white"
                 />
                 <button
                   onClick={() => handleCreateTask(list.id)}

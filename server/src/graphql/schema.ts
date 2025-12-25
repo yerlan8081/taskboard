@@ -20,6 +20,7 @@ export const typeDefs = `#graphql
     CREATED
     UPDATED
     DELETED
+    MOVED
   }
 
   type User {
@@ -78,9 +79,12 @@ export const typeDefs = `#graphql
     me: User!
     boards: [Board!]!
     board(id: ID!): Board
+    list(id: ID!): List
     lists(boardId: ID!): [List!]!
     tasks(listId: ID!): [Task!]!
     task(id: ID!): Task
+    users: [User!]!
+    user(id: ID!): User
   }
 
   input RegisterInput {
@@ -95,11 +99,30 @@ export const typeDefs = `#graphql
     password: String!
   }
 
+  input UpdateProfileInput {
+    name: String
+    avatarUrl: String
+  }
+
+  input ChangePasswordInput {
+    oldPassword: String!
+    newPassword: String!
+  }
+
   input CreateBoardInput {
     title: String!
     description: String
     visibility: BoardVisibility = PRIVATE
     cover: String
+  }
+
+  input UpdateBoardInput {
+    id: ID!
+    title: String
+    description: String
+    visibility: BoardVisibility
+    cover: String
+    isArchived: Boolean
   }
 
   input CreateListInput {
@@ -108,6 +131,15 @@ export const typeDefs = `#graphql
     order: Int!
     color: String
     wipLimit: Int
+  }
+
+  input UpdateListInput {
+    id: ID!
+    title: String
+    order: Int
+    color: String
+    wipLimit: Int
+    isArchived: Boolean
   }
 
   input CreateTaskInput {
@@ -132,14 +164,39 @@ export const typeDefs = `#graphql
     tags: [String!]
   }
 
+  input MoveTaskInput {
+    taskId: ID!
+    toListId: ID!
+  }
+
+  input SetUserRoleInput {
+    userId: ID!
+    role: String!
+  }
+
+  input SetUserStatusInput {
+    userId: ID!
+    status: String!
+  }
+
   type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(input: LoginInput!): AuthPayload!
+    updateProfile(input: UpdateProfileInput!): User!
+    changePassword(input: ChangePasswordInput!): Boolean!
     createBoard(input: CreateBoardInput!): Board!
+    updateBoard(input: UpdateBoardInput!): Board!
+    deleteBoard(id: ID!): Boolean!
     createList(input: CreateListInput!): List!
+    updateList(input: UpdateListInput!): List!
+    deleteList(id: ID!): Boolean!
     createTask(input: CreateTaskInput!): Task!
     updateTask(input: UpdateTaskInput!): Task!
     updateTaskStatus(id: ID!, status: TaskStatus!): Task!
+    moveTask(input: MoveTaskInput!): Task!
+    deleteTask(id: ID!): Boolean!
+    setUserRole(input: SetUserRoleInput!): User!
+    setUserStatus(input: SetUserStatusInput!): User!
   }
 
   type Subscription {
